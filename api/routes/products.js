@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+
 const multer = require("multer");
 
 const checkAuth = require("../middleware/check-auth");
@@ -86,7 +87,7 @@ router.patch("/:productId", (req, res, next)=> {
 
 router.delete("/:productId", (req, res, next)=> {
     const id = req.params.productId;
-    Product.remove({_id: id}).exec()
+    Product.deleteOne({_id: id}).exec()
     .then(result=> {
         res.status(200).json({message: "Usunięcie produktu o numerze " + id});
     })
