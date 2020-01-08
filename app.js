@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const productRoutes = require("./api/routes/products");
 const userRoutes = require("./api/routes/users");
+const orderRoutes = require("./api/routes/orders")
 
 mongoose.connect("mongodb+srv://Jagurt:"+ process.env.MONGO_PASS + "@cluster0-7zpmh.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -17,6 +18,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/products", productRoutes);
 app.use("/users", userRoutes);
+app.use("/orders", orderRoutes);
 
 app.use((req, res, next)=> {
     const error = new Error("Nie znaleziono");

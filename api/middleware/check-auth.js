@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-// uzywanie autoryzacji "Bearer <token>" w headerze w postmanie
+// uzywanie autoryzacji "Bearer <token>" w postmanie
 
 module.exports = (req, res, next) => {
     try{

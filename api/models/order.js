@@ -4,8 +4,9 @@ const mongoose = require("mongoose");
 
 const productSchema = mongoose.Schema({
     _id: mongoose.Types.ObjectId,
-    productID: mongoose.Types.ObjectId,
-    date: date,
+    productID: String,
+    date: Date,
+    email: String,
     country: String,
     city: String,
     adress: String,

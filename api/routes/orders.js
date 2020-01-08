@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const multer = require("multer");
+const jwt = require("jsonwebtoken");
 
 const checkAuth = require("../middleware/check-auth");
 
@@ -19,10 +19,14 @@ router.get("/", checkAuth, (req, res, next)=> {
 
 router.post("/", checkAuth,  (req, res, next)=> {
     console.log(req.file);
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    
     const order = new Order({
         _id: new mongoose.Types.ObjectId(),
-        productID: mongoose.Types.ObjectId,
-        date: Date.now,
+        productID: req.body.productID,
+        date: Date(Date.now),
+        email: decoded.email,
         country: req.body.country,
         city: req.body.city,
         adress: req.body.adress,
@@ -41,13 +45,21 @@ router.post("/", checkAuth,  (req, res, next)=> {
 
 router.get("/:orderId", (req, res, next)=> {
     const id = req.params.orderId;
-    Order.findById(id).exec()
-    .then(doc => {
-        res.status(200).json(doc);
-    })
-    .catch(err => res.status(500).json({error: err}));
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    order = Order.findById(id);
 
-    
+    order.exec(function (err, ordervalue) {
+        if (err) return handleError(err);
+        if (ordervalue.email != decoded.email)
+        {
+            const error = new Error("Nie jesteś upoważniony do przeglądania tych informacji!");
+            error.status = 401;
+            next(error);
+            return;
+        }
+        else res.status(200).json(ordervalue);
+      });
 });
 
 router.patch("/:orderId", (req, res, next)=> {
