@@ -53,7 +53,7 @@ router.get("/:orderId", (req, res, next)=> {
         if (err) return handleError(err);
         if (ordervalue.email != decoded.email)
         {
-            const error = new Error("Nie jesteś upoważniony do przeglądania tych informacji!");
+            const error = new Error("You are not allowed to view this information!");
             error.status = 401;
             next(error);
             return;
@@ -64,28 +64,67 @@ router.get("/:orderId", (req, res, next)=> {
 
 router.patch("/:orderId", (req, res, next)=> {
     const id = req.params.orderId;
-    Order.update({_id:id}, { $set: {
-        country: req.body.country,
-        city: req.body.city,
-        adress: req.body.adress,
-        zipCode: req.body.zipCode,
-        phoneNum: req.body.phoneNum
-    }}).exec()
-    .then(result=> {
-        res.status(200).json({message: "Zmiana zamowienia o numerze " + id});
-    })
-    .catch(err => res.status(500).json({error: err}));
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    order = Order.findById(id);
 
-    
+    order.exec(function (err, ordervalue) {
+        if (err) return handleError(err);
+        if (ordervalue.email != decoded.email)
+        {
+            const error = new Error("You are not allowed to modify this order!");
+            error.status = 401;
+            next(error);
+            return;
+        }
+        else 
+        {
+            const updateOrder = new Order;
+
+            updateOrder.country = req.body.country;
+            updateOrder.city = req.body.city;
+            updateOrder.adress = req.body.adress;
+            updateOrder.zipCode = req.body.zipCode;
+            updateOrder.phoneNum = req.body.phoneNum;
+
+            Order.update({ _id: id }, updateOrder, {multi: false }, function(err) {
+                if(err) { throw err; }
+                res.status(200).json({message: "Changing order with id " + id});
+            });
+        }
+      });
 });
 
 router.delete("/:orderId", (req, res, next)=> {
     const id = req.params.orderId;
-    Order.remove({_id: id}).exec()
+
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    order = Order.findById(id);
+
+    order.exec(function (err, ordervalue) {
+        if (err) return handleError(err);
+        if (ordervalue.email != decoded.email)
+        {
+            const error = new Error("You are not allowed to delete this!");
+            error.status = 401;
+            next(error);
+            return;
+        }
+        else 
+        {
+            Order.remove({_id: id}, function(err) {
+                if(err) { throw err; }
+                res.status(200).json({message: "Deleting order with id " + id});
+            });
+        }
+      });
+
+    /*Order.remove({_id: id}).exec()
     .then(result=> {
         res.status(200).json({message: "Usunięcie zamowienia o numerze " + id});
     })
-    .catch(err => res.status(500).json({error: err}));
+    .catch(err => res.status(500).json({error: err}));*/
     
 });
 
