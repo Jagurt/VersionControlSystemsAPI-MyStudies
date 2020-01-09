@@ -10,7 +10,10 @@ const Order = require("../models/order");
 //-------------- TODO dostosowac do zamowien --------------//
 
 router.get("/", checkAuth, (req, res, next)=> {
-    Order.find().exec()
+    const token = req.headers.authorization.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_KEY);
+    
+    Order.find({email:decoded.email}).exec()
     .then(docs=> {
         res.status(200).json(docs);
     })
@@ -18,7 +21,6 @@ router.get("/", checkAuth, (req, res, next)=> {
 });
 
 router.post("/", checkAuth,  (req, res, next)=> {
-    console.log(req.file);
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_KEY);
     
