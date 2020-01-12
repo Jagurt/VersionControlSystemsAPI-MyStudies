@@ -30,7 +30,7 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-const Product = require("../models/product");
+const Game = require("../models/games");
 
 router.get("/", checkAuth, (req, res, next)=> {
     Product.find().exec()
@@ -42,25 +42,29 @@ router.get("/", checkAuth, (req, res, next)=> {
 
 router.post("/", checkAuth, upload.single("productImage"),  (req, res, next)=> {
     console.log(req.file);
-    const product = new Product({
+    const game = new Game({
         _id: new mongoose.Types.ObjectId(),
-        name: req.body.name,
-        price: req.body.price,
-        productImage: req.file.path
+        title: req.body.title,
+        releaseDate: req.body.releaseDate,
+        productImage: req.file.path,
+        platforms: req.body.platforms,
+        tags: req.body.tags,
+        description: req.body.description,
+        screens: req.body.screens
     });
-    product.save()
+    game.save()
     .then(result => {
         res.status(200).json({
             message: "Dodano nowy produkt",
-            createdProduct: product
+            registeredGame: game
         });
     })
     .catch(err => res.status(500).json({error: err}));
 });
 
-router.get("/:productId", (req, res, next)=> {
-    const id = req.params.productId;
-    Product.findById(id).exec()
+router.get("/:gameId", (req, res, next)=> {
+    const id = req.params.gameId;
+    Game.findById(id).exec()
     .then(doc => {
         res.status(200).json(doc);
     })
@@ -69,25 +73,28 @@ router.get("/:productId", (req, res, next)=> {
     
 });
 
-router.patch("/:productId", (req, res, next)=> {
-    const id = req.params.productId;
-    Product.update({_id:id}, { $set: {
-        name: req.body.name,
-        price: req.body.price
+router.patch("/:gameId", (req, res, next)=> {
+    const id = req.params.gameId;
+    Game.update({_id:id}, { $set: {
+        title: req.body.title,
+        productImage: req.file.path,
+        platforms: req.body.platforms,
+        tags: req.body.tags,
+        description: req.body.description
     }}).exec()
     .then(result=> {
-        res.status(200).json({message: "Zmiana produktu o numerze " + id});
+        res.status(200).json({message: "Zmiana info gry o numerze " + id});
     })
     .catch(err => res.status(500).json({error: err}));
 
     
 });
 
-router.delete("/:productId", (req, res, next)=> {
-    const id = req.params.productId;
-    Product.deleteOne({_id: id}).exec()
+router.delete("/:gameId", (req, res, next)=> {
+    const id = req.params.gameId;
+    Game.deleteOne({_id: id}).exec()
     .then(result=> {
-        res.status(200).json({message: "Usunięcie produktu o numerze " + id});
+        res.status(200).json({message: "Usunięcie gry o numerze " + id});
     })
     .catch(err => res.status(500).json({error: err}));
     

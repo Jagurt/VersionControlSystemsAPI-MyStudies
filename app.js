@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 app.use("/uploads", express.static("uploads"));
 
-app.use("/products", productRoutes);
+app.use("/games", productRoutes);
 app.use("/users", userRoutes);
 app.use("/orders", orderRoutes);
 
