@@ -11,7 +11,8 @@ const userSchema = mongoose.Schema({
     password: {
         type: String, 
         required: true
-    }
+    },
+    contributionPoints: Number
 });
 
 module.exports = mongoose.model("User", userSchema);

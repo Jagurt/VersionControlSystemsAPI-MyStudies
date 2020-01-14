@@ -30,7 +30,7 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-const Game = require("../models/games");
+const Game = require("../models/game");
 
 router.get("/", checkAuth, (req, res, next)=> {
     Product.find().exec()

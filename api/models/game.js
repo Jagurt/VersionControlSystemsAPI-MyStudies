@@ -12,4 +12,4 @@ const productSchema = mongoose.Schema({
     score: double
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model("Game", productSchema);

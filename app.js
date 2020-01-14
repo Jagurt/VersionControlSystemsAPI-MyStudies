@@ -4,9 +4,9 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const productRoutes = require("./api/routes/products");
+const gameRoutes = require("./api/routes/games");
 const userRoutes = require("./api/routes/users");
-const orderRoutes = require("./api/routes/orders")
+const reviewRoutes = require("./api/routes/reviews");
 
 mongoose.connect("mongodb+srv://Jagurt:"+ process.env.MONGO_PASS + "@cluster0-7zpmh.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -16,9 +16,9 @@ app.use(bodyParser.json());
 
 app.use("/uploads", express.static("uploads"));
 
-app.use("/games", productRoutes);
+app.use("/games", gameRoutes);
 app.use("/users", userRoutes);
-app.use("/orders", orderRoutes);
+app.use("/reviews", reviewRoutes);
 
 app.use((req, res, next)=> {
     const error = new Error("Nie znaleziono");
