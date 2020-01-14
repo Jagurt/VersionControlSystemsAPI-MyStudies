@@ -22,7 +22,8 @@ router.post("/signup", (req, res, next)=> {
                         _id: new mongoose.Types.ObjectId(),
                         email: req.body.email,
                         password: hash,
-                        contributionPoints: 0
+                        contributionPoints: 0,
+                        permission: req.body.permission
                     });
                     user.save()
                     .then(result=> {
@@ -58,7 +59,8 @@ router.post("/login", (req, res, next)=>{
                 if(result) {
                     const token = jwt.sign({
                         email: user.email,
-                        userId: user._id
+                        userId: user._id,
+                        permission: user.permission
                     }, process.env.JWT_KEY,
                     {
                         expiresIn: "1h"

@@ -14,7 +14,12 @@ const userSchema = mongoose.Schema({
         type: String, 
         required: true
     },
-    contributionPoints: Number
+    contributionPoints: Number,
+    permission:{
+        type: String,
+        enum: ['pleb','reviewer','moderator','admin'],
+        default: 'pleb'
+    }
 });
 
 module.exports = mongoose.model("User", userSchema);
