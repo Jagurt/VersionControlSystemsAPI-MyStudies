@@ -7,9 +7,11 @@ const Review = require("../models/review");
 
 //      Dokonczyc        //
 
-router.post("/gameId", (req, res, next)=> {
+router.post("/:gameId", (req, res, next)=> {
     const token = req.headers.authorization.split(" ")[1];
     const decoded = jwt.verify(token, process.env.JWT_KEY);
+    //decodedId = typeof(decoded.userId);
+    
 
     Review.findOne({ gameId: req.params.gameId, userId: decoded.userId})
     .exec()
@@ -17,23 +19,21 @@ router.post("/gameId", (req, res, next)=> {
         if(review) {
             res.status(409).json({message: "You already reviewed that game"});
         } else {
-            if(err) {
-                res.status(500).json({error: err});
-            } else {
-                const review = new Review({
-                    _id: new mongoose.Types.ObjectId(),
-                    userId: decoded.userId,
-                    gameId: req.params.gameId,
-                    description: String,
-                    score: Number
-                });
-                review.save()
-                .then(result=> {
-                    res.status(201).json({message: "Your review has been saved"});
-                                    })
-                .catch(err => res.status(500).json({error: err}));
-                
-            }
+            const review = new Review({
+                _id: new mongoose.Types.ObjectId(),
+                userId: decoded.userId,
+                gameId: req.params.gameId,
+                description: req.body.description,
+                score: req.body.score
+            });
+            review.save()
+            .then(result=> {
+                res.status(201).json({
+                    message: "Your review has been saved",
+                    yourReview: review
+            });
+            })
+            .catch(err => res.status(500).json({error: err}));   
         }
     })
     .catch(err => res.status(500).json({error: err}));

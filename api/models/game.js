@@ -9,7 +9,8 @@ const productSchema = mongoose.Schema({
     tags: String,
     description: String,
     screens: String,
-    score: double
+    score: Number,
+    verified: Boolean
 });
 
 module.exports = mongoose.model("Game", productSchema);

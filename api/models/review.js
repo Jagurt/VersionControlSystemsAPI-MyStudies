@@ -8,10 +8,8 @@ const productSchema = mongoose.Schema({
     score: {
         type:Number,
         required: true,
-        range: {
-            min: 0,
-            max: 10
-        }
+        min: 0,
+        max: 10
     }
 });
 

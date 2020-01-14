@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 
+//  TODO: rodzaje użytkowników
+
 const userSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     email: {

@@ -46,12 +46,15 @@ router.post("/", checkAuth, upload.single("productImage"),  (req, res, next)=> {
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
         releaseDate: req.body.releaseDate,
-        productImage: req.file.path,
         platforms: req.body.platforms,
         tags: req.body.tags,
         description: req.body.description,
-        screens: req.body.screens
+        screens: req.body.screens,
+        verified: false
     });
+
+    if(req.file) game.productImage = req.file.path;
+
     game.save()
     .then(result => {
         res.status(200).json({
@@ -77,7 +80,6 @@ router.patch("/:gameId", (req, res, next)=> {
     const id = req.params.gameId;
     Game.update({_id:id}, { $set: {
         title: req.body.title,
-        productImage: req.file.path,
         platforms: req.body.platforms,
         tags: req.body.tags,
         description: req.body.description
@@ -86,8 +88,6 @@ router.patch("/:gameId", (req, res, next)=> {
         res.status(200).json({message: "Zmiana info gry o numerze " + id});
     })
     .catch(err => res.status(500).json({error: err}));
-
-    
 });
 
 router.delete("/:gameId", (req, res, next)=> {
