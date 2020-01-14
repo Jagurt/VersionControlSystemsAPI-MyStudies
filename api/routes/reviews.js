@@ -4,28 +4,29 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 
 const Review = require("../models/review");
+const Game = require("../models/game");
 
-//      Dokonczyc        //
+
 
 router.post("/:gameId", (req, res, next)=> {
     const token = req.headers.authorization.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_KEY);
-    //decodedId = typeof(decoded.userId);
-    
+    const decoded = jwt.verify(token, process.env.JWT_KEY);    
+    const id = req.params.gameId;
 
-    Review.findOne({ gameId: req.params.gameId, userId: decoded.userId})
+    const review = Review.findOne({ gameId: id, userId: decoded.userId})
     .exec()
     .then(review => {
         if(review) {
             res.status(409).json({message: "You already reviewed that game"});
         } else {
-            const review = new Review({
+            review = new Review({
                 _id: new mongoose.Types.ObjectId(),
                 userId: decoded.userId,
-                gameId: req.params.gameId,
+                gameId: id,
                 description: req.body.description,
                 score: req.body.score
             });
+            
             review.save()
             .then(result=> {
                 res.status(201).json({
@@ -37,6 +38,19 @@ router.post("/:gameId", (req, res, next)=> {
         }
     })
     .catch(err => res.status(500).json({error: err}));
+
+    Game.findById(id).exec(function (err, game) {
+        if (err) return handleError(err);
+
+        const updateGame = new Game;
+
+        updateGame.reviewers = game.reviewers + 1;
+        updateGame.score = (game.score + review.score)/(game.reviewers + 1);    // TODO: naprawić update game scora
+        console.log(updateGame.score);
+        Game.update({ _id: id }, updateGame, {multi: false}, function(err) {
+            if(err) { throw err; }
+        });
+    });
 });
 
 router.patch("/:gameId", (req, res, next)=> {
