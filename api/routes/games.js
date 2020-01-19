@@ -42,7 +42,7 @@ router.get("/", checkAuth, (req, res, next)=> {
 
 router.post("/", checkAuth, upload.single("productImage"),  (req, res, next)=> {
 
-    var game = new Game({
+    const game = new Game({
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
         releaseDate: req.body.releaseDate,
@@ -51,8 +51,6 @@ router.post("/", checkAuth, upload.single("productImage"),  (req, res, next)=> {
         description: req.body.description,
         verified: false
     });
-
-    if(req.file) game.productImage = req.file.path;
 
     game.save()
     .then(result => {
@@ -78,7 +76,6 @@ router.get("/:gameId", (req, res, next)=> {
 router.patch("/:gameId", (req, res, next)=> {
     const id = req.params.gameId;
     Game.update({_id:id}, { $set: {
-        title: req.body.title,
         platforms: req.body.platforms,
         tags: req.body.tags,
         description: req.body.description
