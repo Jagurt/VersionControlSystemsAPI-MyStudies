@@ -13,6 +13,8 @@ router.post("/:gameId", (req, res, next)=> {
     const decoded = jwt.verify(token, process.env.JWT_KEY);    
     const id = req.params.gameId;
 
+    var reviewScore;
+
     const review = Review.findOne({ gameId: id, userId: decoded.userId})
     .exec()
     .then(review => {
@@ -27,6 +29,8 @@ router.post("/:gameId", (req, res, next)=> {
                 score: req.body.score
             });
             
+            reviewScore = req.body.score;
+
             review.save()
             .then(result=> {
                 res.status(201).json({
@@ -45,8 +49,7 @@ router.post("/:gameId", (req, res, next)=> {
         const updateGame = new Game;
 
         updateGame.reviewers = game.reviewers + 1;
-        updateGame.score = (game.score + review.score)/(game.reviewers + 1);    // TODO: naprawić update game scora
-        console.log(updateGame.score);
+        updateGame.score = (game.score + reviewScore)/(game.reviewers + 1);
         Game.update({ _id: id }, updateGame, {multi: false}, function(err) {
             if(err) { throw err; }
         });
