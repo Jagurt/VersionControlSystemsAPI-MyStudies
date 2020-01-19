@@ -8,7 +8,6 @@ const productSchema = mongoose.Schema({
     releaseDate: String,
     tags: String,
     description: String,
-    screens: String,
     score: {
         type: Number,
         default: 0

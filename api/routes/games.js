@@ -41,15 +41,14 @@ router.get("/", checkAuth, (req, res, next)=> {
 });
 
 router.post("/", checkAuth, upload.single("productImage"),  (req, res, next)=> {
-    console.log(req.file);
-    const game = new Game({
+
+    var game = new Game({
         _id: new mongoose.Types.ObjectId(),
         title: req.body.title,
         releaseDate: req.body.releaseDate,
         platforms: req.body.platforms,
         tags: req.body.tags,
         description: req.body.description,
-        screens: req.body.screens,
         verified: false
     });
 
@@ -58,7 +57,7 @@ router.post("/", checkAuth, upload.single("productImage"),  (req, res, next)=> {
     game.save()
     .then(result => {
         res.status(200).json({
-            message: "Dodano nowy produkt",
+            message: "New game added.",
             registeredGame: game
         });
     })
